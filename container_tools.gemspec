@@ -14,9 +14,9 @@ Gem::Specification.new do |s|
   s.test_files    = Dir["spec/**/*"]
   s.require_paths = %w(lib)
 
-  s.add_dependency "event_machine"
+  s.add_dependency "em-warden-client"
 
-  s.add_development_dependency "rake", "~> 0.9"
-  s.add_development_dependency "rspec", "~> 2.14"
+  s.add_development_dependency "rake"
+  s.add_development_dependency "rspec", ">2.14"
 end
 
