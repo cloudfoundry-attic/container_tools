@@ -26,7 +26,7 @@ describe "Creating a new container from shell command", type: :integration, requ
         f.write(configs.to_json)
         f.flush
 
-        cmd = "bundle exec ./bin/create_warden_container.rb < #{f.path}"
+        cmd = "bin/create_warden_container.sh < #{f.path}"
         Open3.popen3(cmd) do |_, out, error, wait_th|
           expect(wait_th.value.exitstatus).to eq(0)
           expect(error.read).to be_empty
@@ -53,7 +53,7 @@ describe "Creating a new container from shell command", type: :integration, requ
       configs = {a: 1}
       f.write(configs.to_json)
       f.flush
-      cmd = "bundle exec ./bin/create_warden_container.rb < #{f.path}"
+      cmd = "bin/create_warden_container.sh < #{f.path}"
 
       Open3.popen3(cmd) do |_, out, error, wait_th|
         expect(wait_th.value.exitstatus).to eq(1)
