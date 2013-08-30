@@ -8,7 +8,7 @@
 #   ],
 #    "disk_limit": 100,
 #    "memory_limit": 200,
-#     "network": true,
+#    "network": true,
 # }
 #
 # Then create a container with the specified bind mounts set up.
