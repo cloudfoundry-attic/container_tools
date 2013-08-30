@@ -1,7 +1,7 @@
 require "spec_helper"
-require "container/connection_provider"
+require "container/warden_client_provider"
 
-describe ConnectionProvider do
+describe WardenClientProvider do
   let(:socket_path) { "/tmp/warden.sock.notreally" }
   let(:connection_name) { "connection_name" }
   let(:connected) { false }
@@ -14,7 +14,7 @@ describe ConnectionProvider do
     )
   end
 
-  subject(:connection_provider) { described_class.new(socket_path) }
+  subject(:client_provider) { described_class.new(socket_path) }
 
   describe "#get" do
     before do
@@ -23,13 +23,13 @@ describe ConnectionProvider do
 
     context "when connection is cached" do
       before do
-        @connection = connection_provider.get(connection_name)
+        @client = client_provider.get(connection_name)
       end
 
       context "when connection is connected" do
         let(:connected) { true }
         it "uses cached connection" do
-          expect(connection_provider.get(connection_name)).to equal(@connection)
+          expect(client_provider.get(connection_name)).to equal(@client)
         end
       end
 
@@ -37,7 +37,7 @@ describe ConnectionProvider do
         let(:connected) { false }
         it "creates new connection" do
           EventMachine::Warden::FiberAwareClient.should_receive(:new).with(socket_path).and_return(connection)
-          connection_provider.get(connection_name)
+          client_provider.get(connection_name)
         end
       end
     end
@@ -49,8 +49,8 @@ describe ConnectionProvider do
       end
 
       it "creates a new connection and caches it" do
-        connection_provider.get(connection_name)
-        expect(connection_provider.get(connection_name)).to eq(connection)
+        client_provider.get(connection_name)
+        expect(client_provider.get(connection_name)).to eq(connection)
       end
 
       context "if connection fails" do
@@ -59,7 +59,7 @@ describe ConnectionProvider do
         it "raises an error" do
           connection.stub(:create).and_raise("whoops")
           expect {
-            connection_provider.get(connection_name)
+            client_provider.get(connection_name)
           }.to raise_error
         end
       end
@@ -84,26 +84,26 @@ describe ConnectionProvider do
         EventMachine::Warden::FiberAwareClient.should_receive(:new).
           with(socket_path).ordered.and_return(connection_two)
 
-        connection_provider.get(connection_name)
-        connection_provider.get(connection_name_two)
+        client_provider.get(connection_name)
+        client_provider.get(connection_name_two)
       end
 
       it "closes all connections" do
         connection.should_receive(:disconnect)
         connection_two.should_receive(:disconnect)
 
-        connection_provider.close_all
+        client_provider.close_all
       end
 
       it "removes the connections from the cache" do
         connection.stub(:disconnect)
         connection_two.stub(:disconnect)
-        connection_provider.close_all
+        client_provider.close_all
 
         EventMachine::Warden::FiberAwareClient.should_receive(:new).ordered.
           with(socket_path).and_return(connection)
 
-        connection_provider.get(connection_name)
+        client_provider.get(connection_name)
       end
     end
   end

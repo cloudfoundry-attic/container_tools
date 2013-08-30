@@ -1,6 +1,6 @@
 require "spec_helper"
 
-require "container/connection_provider"
+require "container/warden_client_provider"
 require "container/container"
 require "tempfile"
 require "json"
@@ -36,7 +36,7 @@ describe "Creating a new container from shell command", type: :integration, requ
       expect(json_output.fetch("console_container_port")).to be_an_instance_of(Fixnum)
       expect(json_output.fetch("console_host_port")).to be_an_instance_of(Fixnum)
 
-      container = Container.new(ConnectionProvider.new(warden_socket_path))
+      container = Container.new(WardenClientProvider.new(warden_socket_path))
       container.handle = handle
       container.destroy!
 

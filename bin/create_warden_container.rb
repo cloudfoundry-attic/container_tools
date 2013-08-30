@@ -20,13 +20,13 @@ require "json"
 
 $:.unshift(File.expand_path("../../lib", __FILE__))
 require "container/container"
-require "container/connection_provider"
+require "container/warden_client_provider"
 
 config = JSON.parse(STDIN.read)
 
 begin
   warden_socket_path = config.fetch("warden_socket_path")
-  container = Container.new(ConnectionProvider.new(warden_socket_path))
+  container = Container.new(WardenClientProvider.new(warden_socket_path))
   create_network = config.fetch('network')
   container.create_container(
     config["bind_mounts"] || [],

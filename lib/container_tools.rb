@@ -1,2 +1,2 @@
 require "container/container"
-require "container/connection_provider"
+require "container/warden_client_provider"

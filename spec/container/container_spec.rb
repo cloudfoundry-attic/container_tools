@@ -5,8 +5,8 @@ describe Container do
   let(:handle) { "fakehandle" }
   let(:socket_path) { "/tmp/warden.sock.notreally" }
 
-  let(:connection_provider) { double('connection provider', get: connection) }
-  subject(:container) { described_class.new(connection_provider) }
+  let(:client_provider) { double('connection provider', get: connection) }
+  subject(:container) { described_class.new(client_provider) }
 
   let(:request) { double("request") }
   let(:response) { double("response") }
@@ -25,7 +25,7 @@ describe Container do
 
   describe "#close_all_connections" do
     it "deletegates to connection provider" do
-      connection_provider.should_receive(:close_all)
+      client_provider.should_receive(:close_all)
       container.close_all_connections
     end
   end
@@ -38,7 +38,7 @@ describe Container do
 
     let(:result) { double("result") }
     before do
-      connection_provider.stub(:socket_path).and_return(socket_path)
+      client_provider.stub(:socket_path).and_return(socket_path)
       EventMachine::Warden::FiberAwareClient.stub(:new).and_return(client)
     end
 
@@ -241,7 +241,7 @@ describe Container do
     let(:response_a) { double("network_response", host_port: 8765, container_port: 000)}
     let(:response_b) { double("network_response", host_port: 1111, container_port: 2222)}
     it "makes a create network request and returns the ports" do
-      connection_provider.should_receive(:get).with(:app).twice.and_return(connection)
+      client_provider.should_receive(:get).with(:app).twice.and_return(connection)
       connection.should_receive(:call) do |request|
         expect(request).to be_an_instance_of(::Warden::Protocol::NetInRequest)
         expect(request.handle).to eq(container.handle)

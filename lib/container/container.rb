@@ -14,11 +14,11 @@ class Container
     "rw" => ::Warden::Protocol::CreateRequest::BindMount::Mode::RW,
   }
 
-  attr_reader :socket_path, :path, :host_ip, :network_ports
+  attr_reader :path, :host_ip, :network_ports
   attr_accessor :handle
 
-  def initialize(connection_provider)
-    @connection_provider = connection_provider
+  def initialize(client_provider)
+    @client_provider = client_provider
     @path = nil
     @network_ports = {}
   end
@@ -162,7 +162,7 @@ class Container
 
   # HELPER for DESTROY
   def close_all_connections
-    @connection_provider.close_all
+    @client_provider.close_all
   end
 
   def setup_network
@@ -186,8 +186,8 @@ class Container
 
   # HELPER
   def call(name, request)
-    connection = @connection_provider.get(name)
-    connection.call(request)
+    client = @client_provider.get(name)
+    client.call(request)
   end
 
   def limit_disk(bytes)
@@ -207,6 +207,6 @@ class Container
   private
   def client
     @client ||=
-      EventMachine::Warden::FiberAwareClient.new(@connection_provider.socket_path).tap(&:connect)
+      EventMachine::Warden::FiberAwareClient.new(@client_provider.socket_path).tap(&:connect)
   end
 end
