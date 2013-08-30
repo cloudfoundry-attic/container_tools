@@ -1,13 +1,13 @@
 $:.push File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |s|
-  s.name        = "container-tools"
+  s.name        = "container_tools"
   s.version     = '0.1'
   s.authors     = ["Cloud Foundry Team"]
   s.email       = %w(cf-eng@pivotallabs.com)
   s.homepage    = "http://github.com/cloudfoundry/container_tools"
   s.summary     = %q{
-   Tools to create a container
+   Tools to create a container with application bits and environment vars
   }
   s.files         = %w(LICENSE Rakefile) + Dir["lib/**/*"]
   s.license       = "Apache 2.0"
