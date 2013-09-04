@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.summary     = %q{
    Tools to create a container with application bits and environment vars
   }
-  s.files         = %w(LICENSE Rakefile) + Dir["lib/**/*"]
+  s.files         = %w(LICENSE) + Dir["lib/**/*"]
   s.license       = "Apache 2.0"
   s.test_files    = Dir["spec/**/*"]
   s.require_paths = %w(lib)
