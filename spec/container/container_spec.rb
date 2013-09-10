@@ -156,12 +156,13 @@ describe Container do
         expect(request).to be_an_instance_of(::Warden::Protocol::RunRequest)
         expect(request.handle).to eq(handle)
         expect(request.script).to eq(script)
-        expect(request.privileged).to eq(false)
+        expect(request.privileged).to be_false
+        expect(request.discard_output).to be_true
 
         response
       end
 
-      result = container.run_script(connection_name, script)
+      result = container.run_script(connection_name, script, false, true)
       expect(result).to eq(response)
     end
 
@@ -194,6 +195,7 @@ describe Container do
     let(:nproc_limit) { 123 }
     let(:file_descriptor_limit) { 456 }
     let(:script) { "./dostuffscript" }
+    let(:discard_output) { true }
 
     it "executes a SpawnRequest" do
       container.should_receive(:call) do |name, request|
@@ -203,10 +205,13 @@ describe Container do
         expect(request.rlimits.nproc).to eq(nproc_limit)
         expect(request.rlimits.nofile).to eq(file_descriptor_limit)
         expect(request.script).to eq(script)
+        expect(request.discard_output).to be_true
 
         response
       end
-      result = container.spawn(script, file_descriptor_limit, nproc_limit)
+
+      result = container.spawn(script, file_descriptor_limit, nproc_limit, discard_output)
+
       expect(result).to eq(response)
     end
   end

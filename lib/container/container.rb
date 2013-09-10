@@ -84,11 +84,12 @@ class Container
   end
 
   #API: RUNSCRIPT
-  def run_script(name, script, privileged=false)
+  def run_script(name, script, privileged=false, discard_output=false)
     request = ::Warden::Protocol::RunRequest.new
     request.handle = handle
     request.script = script
     request.privileged = privileged
+    request.discard_output = discard_output
 
     response = call(name, request)
     if response.exit_status > 0
@@ -106,13 +107,14 @@ class Container
   end
 
   #API: SPAWN
-  def spawn(script, file_descriptor_limit, nproc_limit)
+  def spawn(script, file_descriptor_limit, nproc_limit, discard_output)
     request = ::Warden::Protocol::SpawnRequest.new
-    request.rlimits = ::Warden::Protocol::ResourceLimits.new
     request.handle = handle
+    request.rlimits = ::Warden::Protocol::ResourceLimits.new
     request.rlimits.nproc = nproc_limit
     request.rlimits.nofile = file_descriptor_limit
     request.script = script
+    request.discard_output = discard_output
     response = call(:app, request)
     response
   end
