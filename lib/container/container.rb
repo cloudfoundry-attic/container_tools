@@ -107,7 +107,7 @@ class Container
   end
 
   #API: SPAWN
-  def spawn(script, file_descriptor_limit, nproc_limit, discard_output)
+  def spawn(script, file_descriptor_limit, nproc_limit, discard_output=false)
     request = ::Warden::Protocol::SpawnRequest.new
     request.handle = handle
     request.rlimits = ::Warden::Protocol::ResourceLimits.new
