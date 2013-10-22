@@ -31,21 +31,14 @@ describe Container do
   end
 
   describe "#info" do
-    let(:client) { double("client", connect: nil) }
     # can't yield from root fiber, and this object is
     # assumed to be run from another fiber anyway
     around { |example| Fiber.new(&example).resume }
 
-    let(:result) { double("result") }
-    before do
-      client_provider.stub(:socket_path).and_return(socket_path)
-      EventMachine::Warden::FiberAwareClient.stub(:new).and_return(client)
-    end
-
     it "sends an info request to the container" do
 
       called = false
-      client.should_receive(:call) do |request|
+      connection.should_receive(:call) do |request|
         called = true
         expect(request).to be_a(::Warden::Protocol::InfoRequest)
         expect(request.handle).to eq(handle)
@@ -58,7 +51,7 @@ describe Container do
 
     context "when the request fails" do
       it "raises an exception" do
-        client.should_receive(:call).and_raise("foo")
+        connection.should_receive(:call).and_raise("foo")
 
         expect { container.info }.to raise_error("foo")
       end
