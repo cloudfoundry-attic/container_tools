@@ -183,7 +183,7 @@ class Container
   def info
     request = ::Warden::Protocol::InfoRequest.new
     request.handle = @handle
-    client.call(request)
+    call(:app_info, request)
   end
 
   # HELPER
@@ -204,11 +204,5 @@ class Container
 
   def logger
     Logger.new(STDERR)
-  end
-
-  private
-  def client
-    @client ||=
-      EventMachine::Warden::FiberAwareClient.new(@client_provider.socket_path).tap(&:connect)
   end
 end
