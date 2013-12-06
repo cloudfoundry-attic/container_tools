@@ -84,12 +84,13 @@ class Container
   end
 
   #API: RUNSCRIPT
-  def run_script(name, script, privileged=false, discard_output=false)
+  def run_script(name, script, privileged=false, discard_output=false, log_tag=nil)
     request = ::Warden::Protocol::RunRequest.new
     request.handle = handle
     request.script = script
     request.privileged = privileged
     request.discard_output = discard_output
+    request.log_tag = log_tag
 
     response = call(name, request)
     if response.exit_status > 0

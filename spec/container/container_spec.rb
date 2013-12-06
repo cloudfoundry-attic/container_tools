@@ -141,6 +141,7 @@ describe Container do
   describe "#run_script" do
     let(:script) { double("./citizien_kane") }
     let(:response) { double("response", :exit_status => 0) }
+    let(:log_tag) { "some-log-tag" }
 
     it "calls call with the connection name and request" do
       container.should_receive(:call) do |name, request|
@@ -151,11 +152,12 @@ describe Container do
         expect(request.script).to eq(script)
         expect(request.privileged).to be_false
         expect(request.discard_output).to be_true
+        expect(request.log_tag).to eq(log_tag)
 
         response
       end
 
-      result = container.run_script(connection_name, script, false, true)
+      result = container.run_script(connection_name, script, false, true, log_tag)
       expect(result).to eq(response)
     end
 
