@@ -17,6 +17,7 @@ describe "Creating a new container from shell command", type: :integration, requ
       bind_mounts: [
         {src_path: "/vagrant", dst_path: "/var/a", mode: "ro"}
       ],
+      cpu_limit: 300,
       memory_limit: 100,
       disk_limit: 200,
       network: true,

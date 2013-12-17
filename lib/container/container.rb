@@ -136,9 +136,10 @@ class Container
     end
   end
 
-  def create_container(bind_mounts, disk_limit_in_bytes, memory_limit_in_bytes, network)
+  def create_container(bind_mounts, cpu_limit_in_shares, disk_limit_in_bytes, memory_limit_in_bytes, network)
     with_em do
       new_container_with_bind_mounts(bind_mounts)
+      limit_cpu(cpu_limit_in_shares)
       limit_disk(disk_limit_in_bytes)
       limit_memory(memory_limit_in_bytes)
       setup_network if network
@@ -192,6 +193,11 @@ class Container
   def call(name, request)
     client = @client_provider.get(name)
     client.call(request)
+  end
+
+  def limit_cpu(shares)
+    request = ::Warden::Protocol::LimitCpuRequest.new(handle: self.handle, limit_in_shares: shares)
+    call(:app, request)
   end
 
   def limit_disk(bytes)

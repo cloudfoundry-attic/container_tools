@@ -266,21 +266,23 @@ describe Container do
   describe "#create_container" do
     let(:bind_mounts) { double("mounts") }
 
-    it "creates a new container with disk and memory limit" do
+    it "creates a new container with cpu, disk and memory limit" do
       container.should_receive(:new_container_with_bind_mounts).with(bind_mounts)
+      container.should_receive(:limit_cpu).with(300)
       container.should_receive(:limit_disk).with(100)
       container.should_receive(:limit_memory).with(200)
       container.should_receive(:setup_network)
-      container.create_container(bind_mounts, 100, 200, true)
+      container.create_container(bind_mounts, 300, 100, 200, true)
     end
 
     it "does not create the network if not required" do
       container.stub(:new_container_with_bind_mounts)
+      container.stub(:limit_cpu)
       container.stub(:limit_disk)
       container.stub(:limit_memory)
 
       container.should_not_receive(:setup_network)
-      container.create_container(bind_mounts, 100, 200, false)
+      container.create_container(bind_mounts, 300, 100, 200, false)
     end
   end
 

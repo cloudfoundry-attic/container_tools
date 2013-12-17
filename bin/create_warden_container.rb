@@ -6,6 +6,7 @@
 #   "bind_mounts": [
 #     {"src_path": "/tmp/foo", "dst_path": "/bar", mode: "rw"}
 #   ],
+#    "cpu_limit": 300,
 #    "disk_limit": 100,
 #    "memory_limit": 200,
 #    "network": true,
@@ -30,6 +31,7 @@ begin
   create_network = config.fetch('network')
   container.create_container(
     config["bind_mounts"] || [],
+    config.fetch("cpu_limit"),
     config.fetch("disk_limit"),
     config.fetch("memory_limit"),
     create_network)
