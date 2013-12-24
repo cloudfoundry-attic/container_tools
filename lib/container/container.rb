@@ -191,8 +191,15 @@ class Container
 
   # HELPER
   def call(name, request)
-    client = @client_provider.get(name)
-    client.call(request)
+    client(name).call(request)
+  end
+
+  def stream(request, &blk)
+    client(:app).stream(request, &blk)
+  end
+
+  def client(name)
+    @client_provider.get(name)
   end
 
   def limit_cpu(shares)

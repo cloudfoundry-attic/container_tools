@@ -354,4 +354,12 @@ describe Container do
       container.limit_disk(disk_limit_in_bytes)
     end
   end
+
+  describe "stream" do
+    it "streams the data" do
+      callback = lambda {}
+      connection.should_receive(:stream).with(request, &callback)
+      container.stream(request, &callback)
+    end
+  end
 end
