@@ -172,14 +172,21 @@ describe Container do
     context "when the exit status is > 0" do
       let(:exit_status) { 1 }
       let(:stdout) { "HI" }
-      let(:stderr) { "its broken" }
+      let(:stderr) { "it's broken" }
       let(:data) { {:script => script, :exit_status => exit_status, :stdout => stdout, :stderr => stderr} }
       let(:response) { double("response", :exit_status => exit_status, :stdout => stdout, :stderr => stderr) }
       it "raises a warden error" do #check that it's a warden error with the exit status
         container.should_receive(:call).and_return(response)
         expect {
           container.run_script(connection_name, script)
-        }.to raise_error(Container::WardenError, "Script exited with status 1")
+        }.to raise_error { |error|
+          expect(error).to be_a(Container::WardenError)
+          expect(error.message).to eq("Script exited with status 1")
+          expect(error.result).to_not be_nil
+          expect(error.result.exit_status).to eq(1)
+          expect(error.result.stdout).to eq("HI")
+          expect(error.result.stderr).to eq("it's broken")
+        }
       end
     end
   end

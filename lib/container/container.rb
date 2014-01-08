@@ -4,9 +4,17 @@ require "em/warden/client"
 class Container
   class ConnectionError < StandardError;
   end
+
   class BaseError < StandardError;
   end
+
   class WardenError < BaseError;
+    attr_reader :result
+
+    def initialize(message, response=nil)
+      super(message)
+      @result = response
+    end
   end
 
   BIND_MOUNT_MODE_MAP = {
@@ -101,7 +109,7 @@ class Container
         :stderr => response.stderr,
       }
       logger.warn("%s exited with status %d with data %s" % [script.inspect, response.exit_status, data.inspect])
-      raise WardenError.new("Script exited with status #{response.exit_status}")
+      raise WardenError.new("Script exited with status #{response.exit_status}", response)
     else
       response
     end
